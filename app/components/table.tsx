@@ -4,7 +4,7 @@ import { Table, Button, Input } from 'antd';
 import { SearchOutlined, DownloadOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/es/table';
 import { useTrades } from '../Context/Context';
-import { render } from 'react-dom';
+
 
 type Trade = {
     block_timestamp: string;
