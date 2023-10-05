@@ -9,7 +9,7 @@ export default function Home() {
       <TradeProvider >
         <HeroSection />
         <div className="p-2 md:p-4 lg:p-8 max-w-screen-xl mx-auto">
-          <TradeTable />
+          {/* <TradeTable /> */}
           <DemoArea />
         </div>
       </TradeProvider>
