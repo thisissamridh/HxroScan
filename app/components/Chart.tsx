@@ -1,7 +1,15 @@
 'use client'
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush, Defs, LinearGradient, Stop } from 'recharts';
 import { useTrades } from '../Context/Context'; // Adjust the import path to your context file
+
+const formatDateTick = (tick: string) => {
+    const date = new Date(tick);
+    if (window.innerWidth < 500) {
+        return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+    return date.toLocaleString();
+};
 
 const PriceOverTimeGraph: React.FC = () => {
     const { trades } = useTrades();
@@ -21,11 +29,18 @@ const PriceOverTimeGraph: React.FC = () => {
                                 bottom: 20,
                             }}
                         >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="block_timestamp" height={70} tick={{ fontSize: 10 }} />
+                            <Defs>
+                                <LinearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                                    <Stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                                    <Stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                                </LinearGradient>
+                            </Defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#d6d9da" />
+                            <XAxis dataKey="block_timestamp" height={70} tick={{ fontSize: 10 }} tickFormatter={formatDateTick} />
                             <YAxis dataKey="price" domain={['auto', 'auto']} />
                             <Tooltip />
-                            <Line type="monotone" dataKey="price" stroke="#8884d8" activeDot={{ r: 8 }} />
+                            <Line type="monotone" dataKey="price" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" activeDot={{ r: 8 }} />
+                            <Brush dataKey="block_timestamp" height={30} stroke="#3B82F6" fill="#f3f4f6" borderRadius="4px" />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
