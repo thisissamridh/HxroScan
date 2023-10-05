@@ -6,7 +6,7 @@ import { TradeProvider } from './Context/Context'
 export default function Home() {
   return (
     <>
-      <TradeProvider trgPubkey="HyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L">
+      <TradeProvider >
         <HeroSection />
         <div className="p-2 md:p-4 lg:p-8 max-w-screen-xl mx-auto">
           <TradeTable />
