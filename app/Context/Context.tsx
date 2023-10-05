@@ -142,7 +142,7 @@ interface TradeProviderProps {
 
 export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
     const [trades, setTrades] = useState<FillType[]>([]);
-    const [trg, setTrg] = useState('');
+    const [trg, setTrg] = useState('HyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L');
     const [product, setProduct] = useState("SOLUSD-PERP");
 
     const clearTrades = () => {
