@@ -152,7 +152,6 @@ export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
     const addTrades = (newTrades: FillType[]) => {
         setTrades(prev => [...prev, ...newTrades]);
     };
-
     const streamFills = async (beforeTimestamp?: number) => {
         const allFills: FillType[] = [];
 
