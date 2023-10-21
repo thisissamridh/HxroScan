@@ -4,6 +4,7 @@ import TradeTable from './components/table'
 import { TradeProvider } from './Context/Context'
 import DemoArea from './components/PriceChart'
 import BidAskPieChart from './components/TakerPieChart'
+import VolumeOverTimeBarGraph from './components/VolumeBarChart'
 export default function Home() {
   return (
     <>
@@ -13,6 +14,7 @@ export default function Home() {
           <TradeTable />
           <DemoArea />
           <BidAskPieChart />
+          <VolumeOverTimeBarGraph />
         </div>
       </TradeProvider>
     </>
