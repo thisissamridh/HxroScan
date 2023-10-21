@@ -1,4 +1,8 @@
 "use client";
+
+
+
+
 // import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // type FillType = {
@@ -20,50 +24,59 @@
 // type TradeContextType = {
 //     trades: FillType[];
 //     addTrades: (newTrades: FillType[]) => void;
-//     streamFills: (trgPubkey: string, beforeTimestamp?: number) => Promise<void>;
+//     streamFills: (beforeTimestamp?: number) => Promise<void>;
 //     downloadTradesAsJSON: () => void;
-
+//     trg: string;
+//     product: string;
+//     setTrg: (value: string) => void;
+//     setProduct: (value: string) => void;
+//     clearTrades: () => void;
 // };
+
+
 
 // const TradeContext = createContext<TradeContextType | undefined>(undefined);
 
 // interface TradeProviderProps {
 //     children: ReactNode;
-//     trgPubkey: string;
 // }
 
-// export const TradeProvider: React.FC<TradeProviderProps> = ({ children, trgPubkey }) => {
+// export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
 //     const [trades, setTrades] = useState<FillType[]>([]);
+//     const [trg, setTrg] = useState('HyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L');
+//     const [product, setProduct] = useState("SOLUSD-PERP");
+
+//     const clearTrades = () => {
+//         setTrades([]); // This will reset the trades
+//     };
 
 //     const addTrades = (newTrades: FillType[]) => {
 //         setTrades(prev => [...prev, ...newTrades]);
 //     };
 
-//     const getUnixTimestamp = (dateString: string): number => {
-//         const date = new Date(dateString);
-//         return Math.floor(date.getTime() / 1000);
-//     };
-
-//     const streamFills = async (trgPubkey: string, beforeTimestamp?: number) => {
+//     const streamFills = async (beforeTimestamp?: number) => {
 //         const allFills: FillType[] = [];
-//         const products = ["SOLUSD-PERP"];
 
-//         for (const product of products) {
-//             const url = `https://dexterity.hxro.com/fills?product=${product}&trg=${trgPubkey}` +
-//                 (beforeTimestamp ? `&before=${beforeTimestamp}` : "");
-//             const response = await fetch(url);
-//             const data: FillType[] = (await response.json()).fills;
-//             console.log("Fetched fills:", allFills.length);
-//             allFills.push(...data);
+//         const url = `https://dexterity.hxro.com/fills?product=${product}&trg=${trg}` +
+//             (beforeTimestamp ? `&before=${beforeTimestamp}` : "");
 
-//             if (data.length < 50) continue;
-//             beforeTimestamp = getUnixTimestamp(data[0].block_timestamp);
-//         }
+//         const response = await fetch(url);
+//         const data: FillType[] = (await response.json()).fills;
+
+//         allFills.push(...data);
 
 //         addTrades(allFills);
 
-//         if (allFills.length === 50 * products.length) {
-//             streamFills(trgPubkey, getUnixTimestamp(allFills[allFills.length - 1].block_timestamp));
+
+
+//         // Recursively fetch more fills if the number of retrieved fills reaches the maximum threshold
+//         if (allFills.length === 50) { // No need to multiply by products.length since we're using a single product now
+//             const getUnixTimestamp = (dateString: string): number => {
+//                 const date = new Date(dateString);
+//                 return Math.floor(date.getTime() / 1000);
+//             };
+
+//             streamFills(getUnixTimestamp(allFills[allFills.length - 1].block_timestamp));
 //         }
 //     };
 
@@ -80,12 +93,16 @@
 //     };
 
 //     useEffect(() => {
-//         setTrades([]);  // clear out the previous trades
-//         streamFills(trgPubkey);
-//     }, [trgPubkey]);
+//         if (trg && product) {
+//             streamFills();
+//         }
+//     }, [trg, product]);
 
 //     return (
-//         <TradeContext.Provider value={{ trades, addTrades, streamFills, downloadTradesAsJSON }}>
+//         <TradeContext.Provider value={{
+//             trades, addTrades, streamFills, downloadTradesAsJSON,
+//             trg, product, setTrg, setProduct, clearTrades
+//         }}>
 //             {children}
 //         </TradeContext.Provider>
 //     );
@@ -102,7 +119,8 @@
 
 
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 
 type FillType = {
     base_size: number;
@@ -119,20 +137,18 @@ type FillType = {
     taker_trg: string;
     tx_sig: string;
 };
-
 type TradeContextType = {
-    trades: FillType[];
-    addTrades: (newTrades: FillType[]) => void;
-    streamFills: (beforeTimestamp?: number) => Promise<void>;
+    trades: { [key: string]: FillType[] };
+    addTrades: (product: string, newTrades: FillType[]) => void;
+    streamFills: (product: string, beforeTimestamp?: number) => Promise<void>;
     downloadTradesAsJSON: () => void;
     trg: string;
-    product: string;
     setTrg: (value: string) => void;
-    setProduct: (value: string) => void;
+    // clearTrades: (product: string) => void;
     clearTrades: () => void;
+    selectedProduct: string;
+    setSelectedProduct: React.Dispatch<React.SetStateAction<string>>;
 };
-
-
 
 const TradeContext = createContext<TradeContextType | undefined>(undefined);
 
@@ -140,44 +156,72 @@ interface TradeProviderProps {
     children: ReactNode;
 }
 
+type TradeState = {
+    [key: string]: FillType[];
+    'BTCUSD-PERP': FillType[];
+    'SOLUSD-PERP': FillType[];
+    'ETHUSD-PERP': FillType[];
+};
+
 export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
-    const [trades, setTrades] = useState<FillType[]>([]);
+    const initialTradesState: TradeState = {
+        'BTCUSD-PERP': [],
+        'SOLUSD-PERP': [],
+        'ETHUSD-PERP': [],
+    };
+
+    const [trades, setTrades] = useState<typeof initialTradesState>(initialTradesState);
     const [trg, setTrg] = useState('HyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L');
-    const [product, setProduct] = useState("SOLUSD-PERP");
+    const [selectedProduct, setSelectedProduct] = useState<string>("All");
+
+    // const clearTrades = (product: string) => {
+    //     setTrades(prev => ({ ...prev, [product]: [] }));
+    // };
 
     const clearTrades = () => {
-        setTrades([]); // This will reset the trades
+        const clearedTrades = {
+            'BTCUSD-PERP': [],
+            'SOLUSD-PERP': [],
+            'ETHUSD-PERP': []
+        };
+        setTrades(clearedTrades);
     };
 
-    const addTrades = (newTrades: FillType[]) => {
-        setTrades(prev => [...prev, ...newTrades]);
+
+    const addTrades = (product: string, newTrades: FillType[]) => {
+        setTrades(prev => {
+            const updatedTrades = {
+                ...prev,
+                [product]: [...prev[product], ...newTrades]
+            };
+
+            // Logging the number of data items for the product
+            console.log(`Number of data items for ${product}:`, updatedTrades[product].length);
+
+            return updatedTrades;
+        });
     };
 
-    const streamFills = async (beforeTimestamp?: number) => {
-        const allFills: FillType[] = [];
-
+    const streamFills = async (product: string, beforeTimestamp?: number, trg: string = 'HyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L') => {
         const url = `https://dexterity.hxro.com/fills?product=${product}&trg=${trg}` +
             (beforeTimestamp ? `&before=${beforeTimestamp}` : "");
-
         const response = await fetch(url);
         const data: FillType[] = (await response.json()).fills;
 
-        allFills.push(...data);
+        addTrades(product, data);
 
-        addTrades(allFills);
-
-
-
-        // Recursively fetch more fills if the number of retrieved fills reaches the maximum threshold
-        if (allFills.length === 50) { // No need to multiply by products.length since we're using a single product now
+        // If the number of retrieved fills reaches the maximum threshold
+        if (data.length === 50) {
             const getUnixTimestamp = (dateString: string): number => {
                 const date = new Date(dateString);
                 return Math.floor(date.getTime() / 1000);
             };
 
-            streamFills(getUnixTimestamp(allFills[allFills.length - 1].block_timestamp));
+            // Recursively call streamFills with the timestamp of the last retrieved fill
+            streamFills(product, getUnixTimestamp(data[data.length - 1].block_timestamp));
         }
     };
+
 
     const downloadTradesAsJSON = () => {
         const blob = new Blob([JSON.stringify(trades)], { type: 'application/json' });
@@ -192,15 +236,20 @@ export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
     };
 
     useEffect(() => {
-        if (trg && product) {
-            streamFills();
-        }
-    }, [trg, product]);
+        const fetchAllTrades = async () => {
+            const products = ['BTCUSD-PERP', 'SOLUSD-PERP', 'ETHUSD-PERP'];
+            const promises = products.map(product => streamFills(product, undefined, trg));
+            await Promise.all(promises);
+        };
+
+        fetchAllTrades();
+    }, [trg]);
+
 
     return (
         <TradeContext.Provider value={{
             trades, addTrades, streamFills, downloadTradesAsJSON,
-            trg, product, setTrg, setProduct, clearTrades
+            trg, setTrg, clearTrades, selectedProduct, setSelectedProduct
         }}>
             {children}
         </TradeContext.Provider>

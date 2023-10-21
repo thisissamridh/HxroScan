@@ -6,6 +6,15 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  theme: {
+    extend: {
+      colors: {
+        'gradient-purple': '#6A31A5',
+        'gradient-blue': '#3B4C9D',
+        'gradient-green': '#1BA295'
+      }
+    }
+  },
   plugins: [require("daisyui")],
   daisyui: {
     themes: false, // true: all themes | false: only light + dark | array: specific themes like this ["light", "dark", "cupcake"]

@@ -19,6 +19,6 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="daisyui" >
       <body className={inter.className}>{children}</body>
-    </html>
+    </html >
   )
 }
