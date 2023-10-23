@@ -5,6 +5,10 @@ import { TradeProvider } from './Context/Context'
 import DemoArea from './components/PriceChart'
 import BidAskPieChart from './components/TakerPieChart'
 import VolumeOverTimeBarGraph from './components/VolumeBarChart'
+import TradeDistributionPieChart from './components/TradeDistributionPieChart'
+import BaseSizeDistributionHistogram from './components/BaseSizeHistogram'
+import TradeActivityCalendar from './components/Activity'
+import Overview from './components/Overview'
 export default function Home() {
   return (
     <>
@@ -15,6 +19,10 @@ export default function Home() {
           <DemoArea />
           <BidAskPieChart />
           <VolumeOverTimeBarGraph />
+          <TradeDistributionPieChart />
+          <BaseSizeDistributionHistogram />
+          <Overview />
+          <TradeActivityCalendar />
         </div>
       </TradeProvider>
     </>

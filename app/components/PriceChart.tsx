@@ -47,7 +47,7 @@ const PriceOverTimeGraph: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white p-4 shadow-lg rounded-lg w-full max-w-2xl">
+            <div className="bg-white p-4 shadow-lg rounded-lg w-full max-w-6xl">
                 <h2 className="text-xl font-bold mb-4">Price Over Time</h2>
                 <select value={selectedProduct} onChange={handleDropdownChange}>
                     <option value="BTCUSD-PERP">BTCUSD-PERP</option>
@@ -65,6 +65,7 @@ const PriceOverTimeGraph: React.FC = () => {
                             dataKey="price"
                             stroke={getProductColor(selectedProduct)}
                             activeDot={{ r: 8 }}
+                            dot={false}
                         />
                         <Brush dataKey="block_timestamp" height={30} stroke={getProductColor(selectedProduct)} onChange={handleBrushChange} />
                     </LineChart>

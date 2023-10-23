@@ -159,7 +159,10 @@ const TradeTable: React.FC = () => {
         {
             title: 'Quote Size ($)',
             dataIndex: 'quote_size',
-            render: (quote_size) => `$${quote_size.toFixed(2)}`,
+            render: (quote_size, record) => {
+                const calculatedQuoteSize = record.base_size * record.price;
+                return `$${calculatedQuoteSize.toFixed(2)}`;
+            },
         },
         {
             title: 'Base Size',
