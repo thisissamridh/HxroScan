@@ -120,6 +120,8 @@ import { Table, Button, Dropdown, Menu } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/es/table';
 import { useTrades } from '../Context/Context';
+import { Tooltip } from 'antd';
+
 
 type Trade = {
     block_timestamp: string;
@@ -130,12 +132,13 @@ type Trade = {
     base_size: number;
     tx_sig: string;
     taker_trg: string;
+    maker_trg: string;
     maker_order_id: string;
 };
 
 const TradeTable: React.FC = () => {
     const { trades, downloadTradesAsJSON, setSelectedProduct, selectedProduct } = useTrades();
-    const [currentPageSize, setCurrentPageSize] = React.useState(10);
+    const [currentPageSize, setCurrentPageSize] = React.useState(5);
 
     const combinedTrades = Object.values(trades).flat();
     const lastTradeDate = combinedTrades.length ? combinedTrades[combinedTrades.length - 1]?.block_timestamp : undefined;
@@ -175,7 +178,20 @@ const TradeTable: React.FC = () => {
             render: (tx_sig) => {
                 const beginning = tx_sig.substring(0, 6); // first 6 characters
                 const end = tx_sig.substring(tx_sig.length - 4); // last 4 characters
-                return `${beginning}...${end}`
+                const shortenedSig = `${beginning}...${end}`;
+
+                return (
+                    <Tooltip title="Open in SolScan">
+                        <a
+                            href={`https://solscan.io/tx/${tx_sig}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: 'blue' }}  // This line sets the color to blue
+                        >
+                            {shortenedSig}
+                        </a>
+                    </Tooltip>
+                );
             }
         },
         {
@@ -184,7 +200,20 @@ const TradeTable: React.FC = () => {
             render: (taker_trg) => {
                 const beginning = taker_trg.substring(0, 6); // first 6 characters
                 const end = taker_trg.substring(taker_trg.length - 4); // last 4 characters
-                return `${beginning}...${end}`
+                const shortenedTrg = `${beginning}...${end}`;
+
+                return (
+                    <Tooltip title={taker_trg}>
+                        <a
+                            href={`https://solscan.io/account/${taker_trg}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: 'blue' }}  // This line sets the color to blue
+                        >
+                            {shortenedTrg}
+                        </a>
+                    </Tooltip>
+                );
             }
         },
         {
@@ -239,11 +268,12 @@ const TradeTable: React.FC = () => {
             <Table
                 dataSource={selectedProduct === 'All' ? combinedTrades : trades[selectedProduct]}
                 columns={columns}
-                rowKey="tx_sig"
+                rowKey={record => `${record.tx_sig}-${record.maker_order_id}-${record.taker_trg}-${record.maker_trg}`}  // Combined key
+
                 pagination={{
-                    pageSizeOptions: ['10', '20', '30'],
+                    pageSizeOptions: ['5', '15', '30'],
                     showSizeChanger: true,
-                    defaultPageSize: 10,
+                    defaultPageSize: 5,
                     onShowSizeChange: (_, size) => setCurrentPageSize(size),
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 }}

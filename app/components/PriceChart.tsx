@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush } from 'recharts';
+import { ComposedChart, Brush, Line, Bar, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useTrades } from '../Context/Context';
 
 const formatDateTick = (tick: string) => {
@@ -45,6 +45,16 @@ const PriceOverTimeGraph: React.FC = () => {
         }
     };
 
+    const renderLegend = (props: any) => {
+        return (
+            <ul>
+                <li className="legend-item text-center font-bold">
+                    Base Size
+                </li>
+            </ul>
+        );
+    };
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-4 shadow-lg rounded-lg w-full max-w-6xl">
@@ -55,20 +65,24 @@ const PriceOverTimeGraph: React.FC = () => {
                     <option value="ETHUSD-PERP">ETHUSD-PERP</option>
                 </select>
                 <ResponsiveContainer width="100%" height={400}>
-                    <LineChart data={trades[selectedProduct]}>
-                        <CartesianGrid strokeDasharray="3 3" />
+                    <ComposedChart data={trades[selectedProduct]}>
+                        {/* <CartesianGrid strokeDasharray="3 3" /> */}
                         <XAxis dataKey="block_timestamp" tickFormatter={formatDateTick} domain={dataDomain} />
                         <YAxis domain={['auto', 'auto']} />
                         <Tooltip content={<CustomTooltip />} />
+                        <Legend content={renderLegend} />
                         <Line
                             type="monotone"
                             dataKey="price"
                             stroke={getProductColor(selectedProduct)}
+
                             activeDot={{ r: 8 }}
                             dot={false}
                         />
+                        <Area dataKey="price" fill="#ADFF2F	" />
+                        {/* <Bar dataKey="price" fill="#413ea0" /> */}
                         <Brush dataKey="block_timestamp" height={30} stroke={getProductColor(selectedProduct)} onChange={handleBrushChange} />
-                    </LineChart>
+                    </ComposedChart>
                 </ResponsiveContainer>
             </div>
         </div>

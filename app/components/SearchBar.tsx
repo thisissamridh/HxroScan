@@ -18,7 +18,7 @@ const SearchBar: React.FC = () => {
     return (
         <div className="text-center py-5">
             <h1 className="text-3xl font-bold text-white">Explore HXRO Network Insights</h1>
-            <div className="mx-auto m-5 bg-white bg-opacity-30 flex justify-center items-center w-3/5 rounded-md px-2 py-2 backdrop-blur-md">
+            <div className="mx-auto m-5 bg-white bg-opacity-30 flex justify-center items-center w-2/4 rounded-md px-2 py-2 backdrop-blur-md">
                 <div className="relative flex-grow border-r">
                     <input
                         type="text"

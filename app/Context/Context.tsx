@@ -51,7 +51,7 @@ export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
     };
 
     const [trades, setTrades] = useState<typeof initialTradesState>(initialTradesState);
-    const [trg, setTrg] = useState('HyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L');
+    const [trg, setTrg] = useState('null');
     const [selectedProduct, setSelectedProduct] = useState<string>("All");
 
     // const clearTrades = (product: string) => {
@@ -81,26 +81,29 @@ export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
             return updatedTrades;
         });
     };
-
-    const streamFills = async (product: string, beforeTimestamp?: number, trg: string = 'HyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L') => {
+    const streamFills = async (product: string, trg: string, beforeTimestamp?: number) => {
         const url = `https://dexterity.hxro.com/fills?product=${product}&trg=${trg}` +
             (beforeTimestamp ? `&before=${beforeTimestamp}` : "");
         const response = await fetch(url);
-        const data: FillType[] = (await response.json()).fills;
+        const fetchedData: FillType[] = (await response.json()).fills;
 
-        addTrades(product, data);
+        // Filter the data to only include entries where either maker_trg or taker_trg matches the input trg
+        const filteredData = fetchedData.filter(fill => fill.maker_trg === trg || fill.taker_trg === trg);
 
-        // If the number of retrieved fills reaches the maximum threshold
-        if (data.length === 50) {
+        addTrades(product, filteredData);
+
+        // If the number of fetched (not filtered) fills reaches the maximum threshold
+        if (fetchedData.length === 50) {
             const getUnixTimestamp = (dateString: string): number => {
                 const date = new Date(dateString);
                 return Math.floor(date.getTime() / 1000);
             };
 
-            // Recursively call streamFills with the timestamp of the last retrieved fill
-            streamFills(product, getUnixTimestamp(data[data.length - 1].block_timestamp));
+            // Recursively call streamFills with the timestamp of the last fetched (not filtered) fill
+            streamFills(product, trg, getUnixTimestamp(fetchedData[fetchedData.length - 1].block_timestamp));
         }
     };
+
 
 
     const downloadTradesAsJSON = () => {
@@ -118,7 +121,7 @@ export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
     useEffect(() => {
         const fetchAllTrades = async () => {
             const products = ['BTCUSD-PERP', 'SOLUSD-PERP', 'ETHUSD-PERP'];
-            const promises = products.map(product => streamFills(product, undefined, trg));
+            const promises = products.map(product => streamFills(product, trg, undefined,));
             await Promise.all(promises);
         };
 
