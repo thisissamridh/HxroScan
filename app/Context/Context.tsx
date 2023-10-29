@@ -20,7 +20,8 @@ export type FillType = {
 type TradeContextType = {
     trades: { [key: string]: FillType[] };
     addTrades: (product: string, newTrades: FillType[]) => void;
-    streamFills: (product: string, beforeTimestamp?: number) => Promise<void>;
+    streamFills: (product: string, trg: string, beforeTimestamp?: number) => Promise<void>;
+
     downloadTradesAsJSON: () => void;
     trg: string;
     setTrg: (value: string) => void;
