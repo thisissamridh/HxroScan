@@ -13,7 +13,7 @@
     "@ant-design/plots": "^1.2.5",
     "antd": "^5.10.1",
     "axios": "^1.5.1",
-    "daisyui": "^3.8.2",
+    "daisyui": "^3.9.4",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
