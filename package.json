@@ -11,7 +11,7 @@
   "dependencies": {
     "@ant-design/charts": "^1.4.2",
     "@ant-design/plots": "^1.2.5",
-    "antd": "^5.10.1",
+    "antd": "^5.10.3",
     "axios": "^1.5.1",
     "daisyui": "^3.8.2",
     "next": "latest",
