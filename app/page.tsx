@@ -7,7 +7,7 @@ import BidAskPieChart from './components/Charts/PieCharts/TakerPieChart'
 import VolumeOverTimeBarGraph from './components/Charts/LineCharts/VolumeBarChart'
 import TradeDistributionPieChart from './components/Charts/PieCharts/TradeDistributionPieChart'
 import BaseSizeDistributionHistogram from './components/Charts/LineCharts/BaseSizeHistogram'
-import TradeActivityCalendar from './components/Utils/Calendar/Activity'
+// import TradeActivityCalendar from './components/Utils/Calendar/Activity'
 import Overview from './components/OverView/Overview'
 export default function Home() {
   return (
@@ -38,7 +38,7 @@ export default function Home() {
         </div>
 
         <div className="p-2 md:p-4 lg:p-8 max-w-screen-xl mx-auto">
-          <TradeActivityCalendar />
+          {/* <TradeActivityCalendar /> */}
         </div>
         <div className="p-2 md:p-4 lg:p-8 max-w-screen-xl mx-auto">
         </div>

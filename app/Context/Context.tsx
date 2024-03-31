@@ -52,7 +52,7 @@ export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
     };
 
     const [trades, setTrades] = useState<typeof initialTradesState>(initialTradesState);
-    const [trg, setTrg] = useState('null');
+    const [trg, setTrg] = useState('nullHyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L');
     const [selectedProduct, setSelectedProduct] = useState<string>("All");
 
     // const clearTrades = (product: string) => {
