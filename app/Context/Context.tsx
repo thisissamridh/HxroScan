@@ -52,7 +52,7 @@ export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
     };
 
     const [trades, setTrades] = useState<typeof initialTradesState>(initialTradesState);
-    const [trg, setTrg] = useState('nullHyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L');
+    const [trg, setTrg] = useState('HyRypoH2B8UPCVvcFqEBFh1E8f7HoHta9tWBJkMa3r7L');
     const [selectedProduct, setSelectedProduct] = useState<string>("All");
 
     // const clearTrades = (product: string) => {
@@ -122,7 +122,7 @@ export const TradeProvider: React.FC<TradeProviderProps> = ({ children }) => {
     useEffect(() => {
         const fetchAllTrades = async () => {
             const products = ['BTCUSD-PERP', 'SOLUSD-PERP', 'ETHUSD-PERP'];
-            const promises = products.map(product => streamFills(product, trg, undefined,));
+            const promises = products.map(product => streamFills(product, trg, undefined));
             await Promise.all(promises);
         };
 

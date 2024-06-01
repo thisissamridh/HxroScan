@@ -22,7 +22,7 @@ const SearchBar: React.FC = () => {
                 <div className="relative flex-grow border-r">
                     <input
                         type="text"
-                        placeholder="Type here"
+                        placeholder="Enter your trader TRG"
                         className="input input-bordered w-full rounded-none"
                         onChange={handleInputChange}
                     />
