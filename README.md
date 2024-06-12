@@ -3,7 +3,7 @@ Here's a basic `README.md` file for your HXROScan project:
 ````markdown
 # HXROScan
 
-HXROScan is an on-chain monitoring platform developed for the HXRO Foundation to track perpetual (perp) trades and provide real-time trade analytics. It leverages the Helius API for scalable, low-latency data fetching and streaming on Solana, providing users with comprehensive insights into trading activity within the HXRO ecosystem. This project is developed under the HXRO Grants Program.
+HXROScan is on-chain monitoring platform developed for the HXRO Foundation to track perpetual (perp) trades and provide real-time trade analytics. It leverages the Helius API for scalable, low-latency data fetching and streaming on Solana, providing users with comprehensive insights into trading activity within the HXRO ecosystem. This project is developed under the HXRO Grants Program.
 
 ## Features
 
